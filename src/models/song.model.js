@@ -12,6 +12,10 @@ const songSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    coverImage: {
+      type: String,
+      required: true,
+    },
     duration: {
       type: Number,
       required: true,
