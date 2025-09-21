@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import { connectDb } from "./db/connect.js";
+import morgan from "morgan";
+import logger from "./utils/logger.js";
 dotenv.config();
 const app = express();
 
@@ -8,6 +10,24 @@ const PORT = process.env.PORT || 4000;
 
 // middleware
 app.use(express.json());
+
+// logger for api's
+const morganFormat = ":method :url :status :response-time ms";
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message) => {
+        const logObject = {
+          method: message.split(" ")[0],
+          url: message.split(" ")[1],
+          status: message.split(" ")[2],
+          responseTime: message.split(" ")[3],
+        };
+        logger.info(JSON.stringify(logObject));
+      },
+    },
+  })
+);
 
 // server started
 connectDb()
