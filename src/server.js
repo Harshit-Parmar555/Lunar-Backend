@@ -32,9 +32,11 @@ app.use(
 );
 
 import authRouter from "./routes/auth.route.js";
+import adminRouter from "./routes/admin.route.js";
 
 // routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/admin",adminRouter);
 
 // server started
 connectDb()
