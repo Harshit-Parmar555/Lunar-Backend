@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectDb } from "./db/connect.js";
 import morgan from "morgan";
 import logger from "./utils/logger.js";
+import { clerkMiddleware } from "@clerk/express";
 dotenv.config();
 const app = express();
 
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 4000;
 
 // middleware
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // logger for api's
 const morganFormat = ":method :url :status :response-time ms";
