@@ -1,6 +1,6 @@
 import express from "express";
 import { protect, adminOnly } from "../middlewares/auth.middleware.js";
-import { addSong } from "../controllers/admin.controller.js";
+import { addSong, deleteSong } from "../controllers/admin.controller.js";
 import { uploadMedia } from "../middlewares/multer.js";
 const adminRouter = express.Router();
 
@@ -20,5 +20,7 @@ adminRouter.post(
   ]),
   addSong
 );
+
+adminRouter.delete("/delete-song/:id", deleteSong);
 
 export default adminRouter;

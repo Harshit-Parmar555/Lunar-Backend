@@ -48,3 +48,39 @@ export const addSong = async (req, res) => {
     });
   }
 };
+
+export const deleteSong = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Song ID is required",
+      });
+    }
+    const song = await Song.findById(id);
+    if (!song) {
+      return res.status(404).json({
+        success: false,
+        message: "Song not found",
+      });
+    }
+    if (song.album) {
+      await Album.findByIdAndUpdate(song.album, {
+        $pull: { songs: song._id },
+      });
+    }
+
+    await Song.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "Song deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error adding song:", error);
+    res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while adding the song.",
+    });
+  }
+};
