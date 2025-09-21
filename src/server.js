@@ -29,6 +29,11 @@ app.use(
   })
 );
 
+import authRouter from "./routes/auth.route.js";
+
+// routes
+app.use("/api/v1/auth", authRouter);
+
 // server started
 connectDb()
   .then(() => {
