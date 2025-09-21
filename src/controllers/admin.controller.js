@@ -77,10 +77,70 @@ export const deleteSong = async (req, res) => {
       message: "Song deleted successfully",
     });
   } catch (error) {
-    console.error("Error adding song:", error);
+    console.error("Error deleting song:", error);
     res.status(500).json({
       success: false,
-      message: "An unexpected error occurred while adding the song.",
+      message: "An unexpected error occurred while deleting the song.",
+    });
+  }
+};
+
+export const addAlbum = async (req, res) => {
+  try {
+    const { title, artist } = req.body;
+    if (!title || !artist) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and artist are required fields.",
+      });
+    }
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Cover image is required.",
+      });
+    }
+    const coverImageUrl = await uploadImageToFirebase(req.file);
+    const newAlbum = new Album({
+      title,
+      artist,
+      coverImage: coverImageUrl,
+    });
+    await newAlbum.save();
+    res.status(201).json({
+      success: true,
+      message: "Album added successfully",
+      album: newAlbum,
+    });
+  } catch (error) {
+    console.error("Error adding album:", error);
+    res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while adding the album.",
+    });
+  }
+};
+
+export const deleteAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Album ID is required",
+      });
+    }
+    await Song.deleteMany({ album: id });
+    await Album.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "Album and its associated songs deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting album:", error);
+    res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while deleting the album.",
     });
   }
 };
