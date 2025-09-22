@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { connectDb } from "./db/connect.js";
 import morgan from "morgan";
 import logger from "./utils/logger.js";
@@ -10,6 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // middleware
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(clerkMiddleware());
 
