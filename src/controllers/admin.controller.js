@@ -144,3 +144,8 @@ export const deleteAlbum = async (req, res) => {
     });
   }
 };
+
+export const checkAdmin = async (req, res) => {
+  return res.status(200).json({ admin : true });
+}
+

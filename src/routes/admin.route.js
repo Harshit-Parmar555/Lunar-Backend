@@ -5,6 +5,7 @@ import {
   deleteSong,
   addAlbum,
   deleteAlbum,
+  checkAdmin,
 } from "../controllers/admin.controller.js";
 import { uploadMedia } from "../middlewares/multer.js";
 const adminRouter = express.Router();
@@ -28,8 +29,10 @@ adminRouter.post(
 
 adminRouter.delete("/delete-song/:id", deleteSong);
 
-adminRouter.post("/add-album",uploadMedia.single("coverImage") ,addAlbum);
+adminRouter.post("/add-album", uploadMedia.single("coverImage"), addAlbum);
 
-adminRouter.delete("/delete-album/:id",deleteAlbum);
+adminRouter.delete("/delete-album/:id", deleteAlbum);
+
+adminRouter.get("/check", checkAdmin);
 
 export default adminRouter;
