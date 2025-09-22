@@ -9,8 +9,8 @@ import { protect, adminOnly } from "../middlewares/auth.middleware.js";
 const songRouter = express.Router();
 
 songRouter.get("/", protect, adminOnly, getAllSongs);
-songRouter.get("/trending", trendingSongs);
-songRouter.get("/featured", getFeaturedSongs);
-songRouter.get("/search", searchSongs);
+songRouter.get("/trending", protect,trendingSongs);
+songRouter.get("/featured",protect ,getFeaturedSongs);
+songRouter.get("/search", protect,searchSongs);
 
 export default songRouter;
