@@ -26,7 +26,7 @@ export const getAlbumById = async (req, res) => {
         message: "Album id is required",
       });
     }
-    const album = await Album.findById(id);
+    const album = await Album.findById(id).populate("songs");
     if (!album) {
       return res.status(404).json({
         success: false,
