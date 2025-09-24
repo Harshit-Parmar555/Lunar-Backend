@@ -4,7 +4,7 @@ import { uploadImageToFirebase } from "../utils/media.operations.js";
 
 export const addSong = async (req, res) => {
   try {
-    const { title, artist, duration, album } = req.body;
+    const { title, artist, duration, albumId } = req.body;
     if (!title || !artist || !duration) {
       return res.status(400).json({
         success: false,
@@ -27,10 +27,11 @@ export const addSong = async (req, res) => {
       coverImage: coverImageUrl,
       duration,
       url: audioFileUrl,
+      albumId: albumId || null,
     });
     await newSong.save();
-    if (album) {
-      await Album.findByIdAndUpdate(album, {
+    if (albumId) {
+      await Album.findByIdAndUpdate(albumId, {
         $push: { songs: newSong._id },
       });
     }
@@ -65,8 +66,8 @@ export const deleteSong = async (req, res) => {
         message: "Song not found",
       });
     }
-    if (song.album) {
-      await Album.findByIdAndUpdate(song.album, {
+    if (song.albumId) {
+      await Album.findByIdAndUpdate(song.albumId, {
         $pull: { songs: song._id },
       });
     }
