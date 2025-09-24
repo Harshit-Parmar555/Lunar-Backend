@@ -1,7 +1,7 @@
 import { clerkClient } from "@clerk/express";
 
 export const protect = (req, res, next) => {
-  if (!req.auth() || !req.auth().userId) {
+  if (!req.auth.userId) {
     return res.status(401).json({
       error: "Authentication required",
       message: "No valid authentication token provided",
