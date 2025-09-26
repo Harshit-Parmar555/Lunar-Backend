@@ -5,10 +5,10 @@ import {
   getFeaturedSongs,
   searchSongs,
 } from "../controllers/song.controller.js";
-import { protect, adminOnly } from "../middlewares/auth.middleware.js";
+import { protectedRoute, adminOnly } from "../middlewares/auth.middleware.js";
 const songRouter = express.Router();
 
-songRouter.get("/", protect, adminOnly, getAllSongs);
+songRouter.get("/", protectedRoute, adminOnly, getAllSongs);
 songRouter.get("/trending", trendingSongs);
 songRouter.get("/featured", getFeaturedSongs);
 songRouter.get("/search", searchSongs);

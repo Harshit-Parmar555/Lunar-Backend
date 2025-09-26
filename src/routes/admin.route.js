@@ -1,16 +1,16 @@
 import express from "express";
-import { protect, adminOnly } from "../middlewares/auth.middleware.js";
 import {
   addSong,
   deleteSong,
   addAlbum,
   deleteAlbum,
-  checkAdmin,
 } from "../controllers/admin.controller.js";
 import { uploadMedia } from "../middlewares/multer.js";
+import { protectedRoute, adminOnly } from "../middlewares/auth.middleware.js";
 const adminRouter = express.Router();
 
-adminRouter.use(protect, adminOnly);
+adminRouter.use(protectedRoute);
+adminRouter.use(adminOnly);
 
 adminRouter.post(
   "/add-song",
@@ -32,7 +32,5 @@ adminRouter.delete("/delete-song/:id", deleteSong);
 adminRouter.post("/add-album", uploadMedia.single("coverImage"), addAlbum);
 
 adminRouter.delete("/delete-album/:id", deleteAlbum);
-
-adminRouter.get("/check", checkAdmin);
 
 export default adminRouter;

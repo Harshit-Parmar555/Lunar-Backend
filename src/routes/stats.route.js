@@ -1,8 +1,8 @@
 import express from "express";
-import { protect, adminOnly } from "../middlewares/auth.middleware.js";
 import { getStats } from "../controllers/stats.controller.js";
+import { protectedRoute, adminOnly } from "../middlewares/auth.middleware.js";
 const statsRouter = express.Router();
 
-statsRouter.get("/", protect, adminOnly, getStats);
+statsRouter.get("/", protectedRoute, adminOnly, getStats);
 
 export default statsRouter;
