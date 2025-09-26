@@ -1,34 +1,101 @@
 import User from "../models/user.model.js";
+import { auth } from "../utils/firebase.config.js";
+import { generateJwt } from "../utils/jwt.js";
+import dotenv from "dotenv"
 
-export const authCallback = async (req, res) => {
+const isProduction = process.env.NODE_ENV === "production";
+dotenv.config();
+
+export const signUp = async (req, res) => {
   try {
-    const { id, firstname, lastname, imageUrl } = req.body;
+    const { tokenId } = req.body;
 
-    if (!id || !firstname || !lastname || !imageUrl) {
+    if (!tokenId) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields.",
+        message: "Token is required",
       });
     }
 
-    let user = await User.findOne({ clerkId: id });
+    const decodedToken = await auth.verifyIdToken(tokenId);
+
+    if (!decodedToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+
+    const { name, picture, email } = decodedToken;
+    let user = await User.findOne({ email });
+
     if (!user) {
       user = new User({
-        username: firstname + " " + lastname,
-        profile: imageUrl,
-        clerkId: id,
+        username: name,
+        profile: picture,
+        email,
       });
       await user.save();
     }
+
+    const token = generateJwt(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     return res.status(200).json({
       success: true,
-      message: "Authentication successful.",
+      message: "User signed up successfully",
+      user,
     });
   } catch (error) {
-    console.error("Auth callback error:", error);
-    res.status(500).json({
+    console.error("Error in signing up user:", error);
+    return res.status(500).json({
       success: false,
-      message: "Internal server error. Please try again later.",
+      message: "An unexpected error occurred while signing up user",
+    });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : true,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    console.error("Error in logging out user:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while logging out user",
+    });
+  }
+};
+
+export const checkAuth = (req, res) => {
+  try {
+    const isAdmin = process.env.ADMIN_EMAIL === req.user.email;
+    return res.status(200).json({
+      success: true,
+      message: "User is authenticated",
+      isAuthenticated: true,
+      isAdmin,
+    });
+  } catch (error) {
+    console.error("Error in checking authentication:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while checking authentication",
     });
   }
 };
