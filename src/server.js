@@ -4,7 +4,7 @@ import cors from "cors";
 import { connectDb } from "./db/connect.js";
 import morgan from "morgan";
 import logger from "./utils/logger.js";
-import { clerkMiddleware } from "@clerk/express";
+import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 
@@ -18,7 +18,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(clerkMiddleware());
+app.use(cookieParser());
 
 // logger for api's
 const morganFormat = ":method :url :status :response-time ms";
