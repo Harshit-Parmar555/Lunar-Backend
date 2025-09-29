@@ -17,6 +17,35 @@ export const getAllAlbums = async (req, res) => {
   }
 };
 
+export const getFeaturedAlbums = async (req, res) => {
+  try {
+    const albums = await Album.aggregate([
+      {
+        $sample: { size: 4 },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          artist: 1,
+          coverImage: 1,
+        },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      message: "Featured albums fetched successfully",
+      albums,
+    });
+  } catch (error) {
+    console.error("Error in fetching featured albums:", error);
+    res.status(500).json({
+      success: false,
+      message: "An unexpected error occurred while fetching featured albums.",
+    });
+  }
+};
+
 export const getAlbumById = async (req, res) => {
   try {
     const { id } = req.params;
