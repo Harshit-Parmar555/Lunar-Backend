@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import { auth } from "../utils/firebase.config.js";
 import { generateJwt } from "../utils/jwt.js";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
 const isProduction = process.env.NODE_ENV === "production";
 dotenv.config();
@@ -82,14 +82,17 @@ export const logout = (req, res) => {
   }
 };
 
-export const checkAuth = (req, res) => {
+export const checkAuth = async (req, res) => {
   try {
     const isAdmin = process.env.ADMIN_EMAIL === req.user.email;
+    const userEmail = req.user.email;
+    const user = await User.findOne({ userEmail });
     return res.status(200).json({
       success: true,
       message: "User is authenticated",
       isAuthenticated: true,
       isAdmin,
+      user,
     });
   } catch (error) {
     console.error("Error in checking authentication:", error);
