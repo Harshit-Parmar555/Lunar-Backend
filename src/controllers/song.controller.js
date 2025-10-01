@@ -52,7 +52,7 @@ export const trendingSongs = async (req, res) => {
   try {
     const songs = await Song.aggregate([
       {
-        $sample: { size: 4 },
+        $sample: { size: 5 },
       },
       {
         $project: {
@@ -75,6 +75,38 @@ export const trendingSongs = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "An unexpected error occurred while fetching trending songs.",
+    });
+  }
+};
+
+export const getMadeForYouSongs = async (req, res) => {
+  try {
+    const songs = await Song.aggregate([
+      {
+        $sample: { size: 5 },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          artist: 1,
+          coverImage: 1,
+          duration: 1,
+          url: 1,
+        },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      message: "Made for you songs fetched successfully",
+      songs,
+    });
+  } catch (error) {
+    console.error("Error in fetching made for you songs:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        "An unexpected error occurred while fetching made for you songs.",
     });
   }
 };
