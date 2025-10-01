@@ -85,8 +85,7 @@ export const logout = (req, res) => {
 export const checkAuth = async (req, res) => {
   try {
     const isAdmin = process.env.ADMIN_EMAIL === req.user.email;
-    const userEmail = req.user.email;
-    const user = await User.findOne({ userEmail });
+    const user = await User.findOne({ email : req.user.email });
     return res.status(200).json({
       success: true,
       message: "User is authenticated",
