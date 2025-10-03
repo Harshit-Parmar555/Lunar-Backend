@@ -9,11 +9,14 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 4000;
+const isDevelopment = process.env.NODE_ENV === "development";
 
 // middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: isDevelopment
+      ? "http://localhost:5173"
+      : "https://lunar.vercel.app",
     credentials: true,
   })
 );
