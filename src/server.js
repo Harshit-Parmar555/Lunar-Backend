@@ -10,13 +10,12 @@ const app = express();
 
 const PORT = process.env.PORT || 4000;
 const isDevelopment = process.env.NODE_ENV === "development";
+const CLIENT_URL = process.env.CLIENT_URL;
 
 // middleware
 app.use(
   cors({
-    origin: isDevelopment
-      ? "http://localhost:5173"
-      : "https://lunar.vercel.app",
+    origin: isDevelopment ? "http://localhost:5173" : CLIENT_URL,
     credentials: true,
   })
 );
