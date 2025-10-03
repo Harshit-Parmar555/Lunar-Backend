@@ -1,6 +1,6 @@
 import Song from "../models/song.model.js";
 import Album from "../models/album.model.js";
-import { uploadImageToFirebase } from "../utils/media.operations.js";
+import { uploadToFirebase,deleteFromFirebase } from "../utils/media.operations.js";
 
 export const addSong = async (req, res) => {
   try {
@@ -19,8 +19,8 @@ export const addSong = async (req, res) => {
         message: "Cover image and audio file are required.",
       });
     }
-    const coverImageUrl = await uploadImageToFirebase(imageFile);
-    const audioFileUrl = await uploadImageToFirebase(audioFile);
+    const coverImageUrl = await uploadToFirebase(imageFile);
+    const audioFileUrl = await uploadToFirebase(audioFile);
     const newSong = new Song({
       title,
       artist,
@@ -71,6 +71,9 @@ export const deleteSong = async (req, res) => {
         $pull: { songs: song._id },
       });
     }
+
+    await deleteFromFirebase(song.coverImage);
+    await deleteFromFirebase(song.url);
 
     await Song.findByIdAndDelete(id);
     res.status(200).json({

@@ -1,7 +1,7 @@
 import fs from "fs";
 import { bucket } from "../utils/firebase.config.js";
 
-const uploadImageToFirebase = async (file) => {
+const uploadToFirebase = async (file) => {
   try {
     if (!file) {
       throw new Error("No file provided");
@@ -27,4 +27,20 @@ const uploadImageToFirebase = async (file) => {
   }
 };
 
-export { uploadImageToFirebase };
+const deleteFromFirebase = async (imageURL) => {
+  try {
+    if (!imageURL) throw new Error("No image URL provided");
+
+    const fileName = decodeURIComponent(imageURL.split("/").pop());
+    const file = bucket.file(fileName);
+
+    await file.delete();
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting image from Firebase:", error.message);
+    return false;
+  }
+};
+
+export { uploadToFirebase,deleteFromFirebase };
